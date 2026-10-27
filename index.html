@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Phonics</title>
+<title>G3 英文複習</title>
 <style>
 :root{
   --bg:#fdf8f0; --card:#fff; --ink:#2b2a33; --muted:#6b6a75; --line:#ece4d6;
@@ -13,28 +13,28 @@
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",system-ui,sans-serif;line-height:1.6}
-nav{position:sticky;top:0;z-index:5;background:rgba(253,248,240,.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);display:flex;gap:6px;overflow-x:auto;padding:8px 12px}
-nav button{flex:0 0 auto;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;font:inherit;font-size:15px;cursor:pointer;color:var(--ink)}
-nav button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
-main{max-width:980px;margin:16px auto 40px;padding:0 16px}
-section{display:none}
-section.on{display:block}
-.card{background:var(--card);border-radius:18px;padding:18px;box-shadow:0 4px 18px rgba(80,60,20,.08);margin-bottom:16px}
-h3{margin:0 0 10px;font-size:20px}
-.muted{color:var(--muted);font-size:14px}
-.row{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:10px 0}
+#nav{position:sticky;top:0;z-index:5;background:rgba(253,248,240,.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);display:flex;gap:6px;overflow-x:auto;padding:8px 12px}
+#nav button{flex:0 0 auto;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;font:inherit;font-size:15px;cursor:pointer;color:var(--ink)}
+#nav button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+#phonics main{max-width:980px;margin:16px auto 40px;padding:0 16px}
+#phonics section{display:none}
+#phonics section.on{display:block}
+#phonics .card{background:var(--card);border-radius:18px;padding:18px;box-shadow:0 4px 18px rgba(80,60,20,.08);margin-bottom:16px}
+#phonics h3{margin:0 0 10px;font-size:20px}
+#phonics .muted{color:var(--muted);font-size:14px}
+#phonics .row{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:10px 0}
 .snd{border:0;border-radius:12px;color:#fff;font:inherit;font-weight:800;font-size:18px;padding:6px 14px;cursor:pointer;white-space:nowrap}
 .snd:active{transform:scale(.95)}
-.words{display:flex;flex-wrap:wrap;gap:10px}
+#phonics .words{display:flex;flex-wrap:wrap;gap:10px}
 .w{display:flex;align-items:center;gap:4px;background:#fff;border:2px solid var(--line);border-radius:14px;padding:6px 6px 6px 14px;font-size:20px;font-weight:700;cursor:pointer;user-select:none}
 .w:active{transform:scale(.96)}
 .w .k{border-radius:4px;padding:0 2px}
 .w .slow{border:0;background:#f3efe7;border-radius:10px;font-size:13px;padding:4px 8px;cursor:pointer}
 .w.playing{border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,122,89,.2)}
-.rule{background:#fff7e6;border-left:5px solid #ffb020;border-radius:10px;padding:8px 14px;margin-top:12px}
-table{width:100%;border-collapse:collapse}
-th,td{border:1px solid var(--line);padding:8px;text-align:center}
-th{background:#f7f1e6}
+#phonics .rule{background:#fff7e6;border-left:5px solid #ffb020;border-radius:10px;padding:8px 14px;margin-top:12px}
+#phonics table{width:100%;border-collapse:collapse}
+#phonics th,#phonics td{border:1px solid var(--line);padding:8px;text-align:center}
+#phonics th{background:#f7f1e6}
 td.cell{cursor:pointer;font-weight:700;font-size:17px}
 td.cell:hover{background:#fff4ec}
 .tablewrap{overflow-x:auto}
@@ -56,10 +56,21 @@ td.cell:hover{background:#fff4ec}
 .bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
 .qword{font-size:44px;font-weight:800;text-align:center;margin:6px 0;cursor:pointer}
 .center{text-align:center}
+#parts{display:flex;gap:8px;padding:10px 12px 0;max-width:980px;margin:0 auto}
+#parts button{flex:1;border:2px solid var(--line);background:#fff;border-radius:14px 14px 0 0;padding:10px 12px;font:inherit;font-size:16px;font-weight:800;cursor:pointer;color:var(--ink)}
+#parts button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.part{display:none}
+.part.on{display:block}
+#review{font-family:system-ui,"Microsoft JhengHei",sans-serif;color:#25314b;background:#f6f7fc;line-height:normal}#review header{background:linear-gradient(120deg,#7564c9,#9b83d9);color:white;padding:35px max(20px,calc((100vw - 1040px)/2))}#review h1{margin:0 0 10px;font-size:clamp(26px,4vw,40px)}#review header p{margin:0;line-height:1.8}#review .wrap{max-width:1040px;margin:auto;padding:24px 18px 70px}#review nav{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}#review button,#review .navlink{font:inherit;border:1px solid #dcdcf0;border-radius:12px;background:white;padding:10px 14px;color:#493b90;cursor:pointer}#review .navlink{text-decoration:none}#review button:hover,#review .navlink:hover{background:#eeeaff}#review .card{background:white;border:1px solid #e8e8f2;border-radius:18px;padding:22px;margin:18px 0;box-shadow:0 3px 15px #20204008}#review h2{margin:0 0 14px;color:#5d4bb1}#review h3{color:#4a4c75;margin:20px 0 10px}#review .pill{display:inline-block;background:#eeeaff;color:#5a48aa;border-radius:99px;padding:5px 10px;font-size:13px}#review .words{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:9px}#review .word{background:#f8f7fe;border-radius:10px;padding:12px}#review .word b{display:block;font-size:17px}#review .word span{color:#59647b;font-size:14px}#review .rule{background:#f0f9f1;border-left:4px solid #7ebc8d;padding:12px 15px;border-radius:9px;margin:10px 0;line-height:1.9}#review .examples{line-height:2}#review .note{background:#fff8e5;padding:12px 15px;border-radius:10px;line-height:1.8}#review table{border-collapse:collapse;width:100%}#review td,#review th{padding:10px;border-bottom:1px solid #e8e8f2;text-align:left}#review th{background:#f4f1ff}#review .numbers{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:8px}#review .number{padding:10px;background:#f5f8ff;border-radius:9px}#review .number strong{color:#6955b8;margin-right:10px}#review .tools{display:flex;gap:8px;flex-wrap:wrap}#review.hidden-zh .word span{visibility:hidden}#review .muted{color:#69748b;font-size:14px}#review footer{text-align:center;color:#6e7586;margin-top:30px}@media print{#review header{background:white;color:#25314b;padding:12px}#review .wrap{padding:8px}#review nav,#review .tools,#review .speak{display:none!important}#review .card{box-shadow:none;break-inside:avoid}#review{background:white}#parts{display:none!important}}
 @media (max-width:520px){.choice{min-width:44%}}
 </style>
 </head>
 <body>
+<div id="parts">
+  <button data-p="phonics" class="on">Part 1｜Phonics 自然發音</button>
+  <button data-p="review">Part 2｜Go Kiwi 2A 複習</button>
+</div>
+<div id="phonics" class="part on">
 <nav id="nav">
   <button data-s="s1" class="on">發音</button>
   <button data-s="s2">單字表</button>
@@ -158,6 +169,33 @@ td.cell:hover{background:#fff4ec}
 </section>
 
 </main>
+</div>
+
+<div id="review" class="part">
+<header><h1>📚 Go Kiwi 2A｜英文複習整理</h1></header>
+<main class="wrap">
+<nav><a class="navlink" href="#u2">Unit 2</a><a class="navlink" href="#u3">Unit 3</a><a class="navlink" href="#u4">Unit 4</a><a class="navlink" href="#numbers">Numbers</a><a class="navlink" href="#check">學習檢查</a></nav>
+<div class="tools"><button id="rvToggleZh">👀 顯示／隱藏單字中文</button><button id="rvPrint">🖨️ 列印／另存 PDF</button><button data-say="Where is the lamp? It is on the table. Can she swim? Yes, she can.">🔊 句型朗讀示範</button></div>
+<section class="card" id="u2"><span class="pill">p.16–17</span><h2>Unit 2｜物品、遊樂場與位置</h2>
+<h3>① 必背單字（12 組）</h3><div class="words" id="w2"></div>
+<h3>② 位置介系詞（7 個）</h3><div class="words" id="prep"></div>
+<h3>③ 句型整理</h3><div class="rule"><b>Where is + 單數名詞?</b> → It is / It's + 位置描述。<br><b>Where are + 複數名詞?</b> → They are / They're + 位置描述。</div>
+<div class="examples">Where is the lamp? → It's on the table.<br>Where is the pillow? → It's on the bed.<br>Where are the slippers? → They're under the bed.<br>Where are the plants? → They're in front of the window.</div>
+<div class="note">⭐ 單數用 <b>is / it</b>；複數用 <b>are / they</b>。slippers、monkey bars 為複數形式。位置描述常用「介系詞 + the + 名詞」。</div></section>
+<section class="card" id="u3"><span class="pill">p.30–31 ＋老師補充</span><h2>Unit 3｜情緒、感覺與天氣</h2>
+<h3>① 情緒與感覺（12 個）</h3><div class="words" id="w3"></div><h3>② 天氣（6 個）</h3><div class="words" id="weather"></div>
+<h3>③ 主詞與 be 動詞</h3><table><tr><th>主詞</th><th>be 動詞</th><th>例句</th></tr><tr><td>I</td><td>am</td><td>I am happy.</td></tr><tr><td>He / She</td><td>is</td><td>She is tired.</td></tr><tr><td>You / We / They</td><td>are</td><td>They are hungry.</td></tr></table>
+<h3>④ 句型整理</h3><div class="rule">肯定句：<b>Subject + am/is/are + adjective.</b><br>問句：<b>Am/Is/Are + subject + adjective?</b><br>回答：<b>Yes, subject + be verb.</b> / <b>No, subject + be verb + not.</b></div>
+<div class="examples">Is he tired? → Yes, he is.<br>Is she angry? → No, she isn't. She is happy.<br>Are they excited? → Yes, they are.<br>Are you thirsty? → No, I'm not.</div>
+<div class="note">⭐ be 動詞要跟主詞配對；形容詞放在 be 動詞後面。回答 Are you...? 時，應使用 I am / I'm not。</div></section>
+<section class="card" id="u4"><span class="pill">p.38–41</span><h2>Unit 4｜動作能力與臉部</h2><h3>① 動作單字（13 組）</h3><div class="words" id="w4"></div><h3>② 臉部部位（8 個）</h3><div class="words" id="face"></div><h3>③ 句型整理</h3>
+<div class="rule"><b>What can + subject + do?</b> → Subject + can + 原形動詞。<br><b>Can + subject + 原形動詞?</b> → Yes, subject + can. / No, subject + can't.</div>
+<div class="examples">What can she do? → She can swim.<br>Can he sing? → Yes, he can.<br>Can she ride a bike? → No, she can't. She can swim.</div><div class="note">⭐ can 後面一定是<b>動詞原形</b>：She can sing. ✓　She can sings. ✗</div></section>
+<section class="card" id="numbers"><span class="pill">補充練習，非已確認正式範圍</span><h2>Numbers｜數字英文拼寫 1–20</h2><div class="numbers" id="nums"></div><p class="note">⭐ 特別注意：three、eight、twelve、thirteen、fifteen、eighteen、twenty。老師只說「Numbers including spelling」，沒有指定確切範圍。</p></section>
+<section class="card" id="check"><h2>✅ 學習檢查清單</h2><div id="checks"></div><p class="muted">Bathroom Vocabulary 活動及 Unit 1 詳細內容尚未提供，未自行編造正式題庫。</p></section>
+<footer>Go Kiwi 2A · Review Notes · 可離線使用</footer>
+</main>
+</div>
 
 <script>
 // ---------- 資料 ----------
@@ -359,6 +397,44 @@ function renderQ(){
   document.getElementById("qzNext").onclick=()=>{qz.i++;renderQ();};
 }
 startQuiz();
+
+// ---------- Part 切換 ----------
+(function(){
+  const parts=document.getElementById("parts");
+  function show(p){
+    parts.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x.dataset.p===p));
+    document.querySelectorAll(".part").forEach(x=>x.classList.toggle("on",x.id===p));
+  }
+  parts.addEventListener("click",e=>{
+    const b=e.target.closest("button"); if(!b) return;
+    show(b.dataset.p); history.replaceState(null,"",b.dataset.p==="review"?"#review":location.pathname);
+    window.scrollTo({top:0});
+  });
+  if(["#review","#u2","#u3","#u4","#numbers","#check"].includes(location.hash)) show("review");
+})();
+</script>
+<script>
+// ---------- Part 2：Go Kiwi 2A 複習 ----------
+(function(){
+const sets={
+w2:[['plant','植物'],['mirror','鏡子'],['lamp','檯燈'],['guitar','吉他'],['slippers','拖鞋'],['pillow','枕頭'],['slide','溜滑梯'],['swing','鞦韆'],['seesaw','翹翹板'],['sandpit','沙坑'],['monkey bars','攀爬單槓'],['jungle gym','攀爬架']],
+prep:[['in','在裡面'],['behind','在後面'],['in front of','在前面'],['next to','在旁邊'],['on','在上面'],['under','在下面'],['between','在兩者之間']],
+w3:[['happy','開心的'],['sad','難過的'],['hot','熱的'],['cold','冷的'],['hungry','餓的'],['thirsty','口渴的'],['tired','疲倦的'],['brave','勇敢的'],['nervous','緊張的'],['excited','興奮的'],['scared','害怕的'],['angry','生氣的']],
+weather:[['sunny','晴朗的'],['rainy','下雨的'],['windy','有風的'],['cloudy','多雲的'],['stormy','暴風雨的'],['snowy','下雪的']],
+w4:[['read','閱讀'],['jump','跳'],['rip','撕破'],['ride a bike','騎腳踏車'],['fly a kite','放風箏'],['sing','唱歌'],['dance','跳舞'],['use chopsticks','使用筷子'],['drive a car','開車'],['draw pictures','畫圖'],['speak English','說英文'],['swim','游泳'],['use a computer','使用電腦']],
+face:[['hair','頭髮'],['eyebrows','眉毛'],['eyes','眼睛'],['nose','鼻子'],['lips','嘴唇'],['mouth','嘴巴'],['ears','耳朵'],['chin','下巴']]
+};
+function speak(t){if(!('speechSynthesis' in window)){console.warn('此瀏覽器不支援朗讀');return}speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=.82;speechSynthesis.speak(u)}
+for(let [id,arr] of Object.entries(sets)){document.getElementById(id).innerHTML=arr.map(([en,zh])=>`<div class="word"><b>${en}</b><span>${zh}</span><button class="speak" style="margin-top:8px;padding:4px 8px;font-size:12px" data-say="${en}">🔊 朗讀</button></div>`).join('')}
+document.addEventListener('click',e=>{let b=e.target.closest('[data-say]');if(b)speak(b.dataset.say)});
+const ns=['one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen','twenty'];
+document.getElementById('nums').innerHTML=ns.map((n,i)=>`<div class="number"><strong>${i+1}</strong>${n}</div>`).join('');
+const checks=['我會拼 Unit 2 的 12 組單字','我會分辨 7 個位置介系詞','我會使用 Where is / Where are','我會拼 Unit 3 的情緒及天氣單字','我會正確使用 am / is / are','我會拼 Unit 4 的 13 組動作單字','我會使用 can / can’t 問答','我認得 8 個臉部部位','我練習過數字英文拼寫'];
+document.getElementById('checks').innerHTML=checks.map((s,i)=>`<label style="display:block;padding:8px 0"><input type="checkbox" data-check="${i}"> ${s}</label>`).join('');
+try{let old=JSON.parse(localStorage.getItem('kiwi-checks')||'[]');document.querySelectorAll('[data-check]').forEach((el,i)=>{el.checked=!!old[i];el.addEventListener('change',()=>{try{localStorage.setItem('kiwi-checks',JSON.stringify([...document.querySelectorAll('[data-check]')].map(x=>x.checked)))}catch(e){}})})}catch(e){}
+document.getElementById("rvToggleZh").onclick=()=>document.getElementById("review").classList.toggle("hidden-zh");
+document.getElementById("rvPrint").onclick=()=>window.print();
+})();
 </script>
 </body>
 </html>
