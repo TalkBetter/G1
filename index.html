@@ -153,7 +153,15 @@ td.cell:hover{background:#fff4ec}
 
 <section id="s5">
   <div class="card">
-    <div class="top"><div class="bar"><i id="qzBar"></i></div><span id="qzProg" class="muted"></span></div>
+    <div class="top">
+      <select id="qzRange" class="btn ghost" style="padding:8px">
+        <option value="cg">Hard / Soft c + g</option>
+        <option value="c">Hard c / Soft c</option>
+        <option value="g">Hard g / Soft g</option>
+        <option value="all">全部</option>
+      </select>
+      <div class="bar"><i id="qzBar"></i></div><span id="qzProg" class="muted"></span>
+    </div>
     <div id="qzBody"></div>
   </div>
 </section>
@@ -361,11 +369,32 @@ function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.rando
 
 // ---------- 測驗 ----------
 let qz=null;
+const qzRange=document.getElementById("qzRange");
+// c / g 規則說明：看 c、g 後面的字母
+function why(w){
+  const o=W[w], grp=G[o.cat].grp;
+  if(grp!=="c"&&grp!=="g") return "";
+  const L=w[o.k], nx=w[o.k+1], soft=o.cat==="sc"||o.cat==="sg";
+  if(w==="girl") return `<b>girl</b> 是例外：g 後面是 <b>i</b>，但唸 Hard g /g/`;
+  return `${L} 後面是 <b>${nx}</b> → ${soft?`e、i、y 前面，唸 ${G[o.cat].label}`:`不是 e、i、y，唸 ${G[o.cat].label}`}`;
+}
+// 找出唸法不同的字：1 個目標 + 2 個另一種唸法
+function oddQ(grp){
+  const [a,b]=GROUP_OPTS[grp], target=Math.random()<.5?a:b, other=target===a?b:a;
+  const pick=cat=>shuffle(ALL.filter(w=>W[w].cat===cat));
+  const ans=pick(target)[0];
+  return {t:"odd",grp,target,ans,opts:shuffle([ans,...pick(other).slice(0,2)])};
+}
 function startQuiz(list){
-  const src=list&&list.length?list:ALL;
-  qz={qs:shuffle(src).slice(0,10),i:0,right:0,wrongs:[]};
+  const r=qzRange.value;
+  const src=list&&list.length?list:(r==="all"?ALL:ALL.filter(w=>r.includes(G[W[w].cat].grp)));
+  let qs=shuffle(src).slice(0,10).map(w=>({t:"cat",w}));
+  // c / g 範圍：每 3 題換 1 題「找出不同唸法」
+  if(!(list&&list.length)&&r!=="all") qs=shuffle(qs.map((q,i)=>i%3===2?oddQ(G[W[q.w].cat].grp):q));
+  qz={qs,i:0,right:0,wrongs:[]};
   renderQ();
 }
+qzRange.onchange=()=>startQuiz();
 function renderQ(){
   const body=document.getElementById("qzBody"), n=qz.qs.length;
   document.getElementById("qzBar").style.width=(qz.i/n*100)+"%";
@@ -377,23 +406,39 @@ function renderQ(){
     document.getElementById("qzAgain").onclick=()=>startQuiz();
     return;
   }
-  const w=qz.qs[qz.i];
-  body.innerHTML=`<div class="qword">${w}</div>
-    <div class="center"><button class="btn ghost" id="qzHear">🔊</button></div>
-    <div class="choices">${optsFor(w).map(o=>`<button class="choice" data-o="${o}" style="color:${G[o].color}">${G[o].label}</button>`).join("")}</div>
-    <div class="fb" id="qzFb"></div>
+  const q=qz.qs[qz.i], next=`<div class="fb" id="qzFb"></div>
     <div class="center"><button class="btn" id="qzNext" style="visibility:hidden">下一題 ➜</button></div>`;
-  document.getElementById("qzHear").onclick=()=>play(w);
   let done=false;
-  body.querySelector(".choices").onclick=e=>{
-    const b=e.target.closest(".choice"); if(!b||done) return; done=true;
-    const cat=W[w].cat, fb=document.getElementById("qzFb");
-    body.querySelector(".qword").innerHTML=colored(w);
-    if(b.dataset.o===cat){qz.right++;markRight(w);b.classList.add("right");fb.textContent="✅";}
-    else{qz.wrongs.push(w);markWrong(w);b.classList.add("wrong");body.querySelector(`[data-o="${cat}"]`).classList.add("right");fb.innerHTML=`❌ ${sndBtn(cat)}`;}
-    play(w);
-    document.getElementById("qzNext").style.visibility="visible";
-  };
+  if(q.t==="odd"){
+    const g=G[q.target];
+    body.innerHTML=`<p class="center" style="font-size:20px">哪一個字的 <b>${q.grp}</b> 唸 <b style="color:${g.color}">${g.label}</b>？</p>
+      <div class="choices">${q.opts.map(o=>`<button class="choice" data-o="${o}">${o}</button>`).join("")}</div>${next}`;
+    body.querySelector(".choices").onclick=e=>{
+      const b=e.target.closest(".choice"); if(!b||done) return; done=true;
+      const fb=document.getElementById("qzFb");
+      body.querySelectorAll(".choice").forEach(x=>x.innerHTML=colored(x.dataset.o));
+      if(b.dataset.o===q.ans){qz.right++;markRight(q.ans);b.classList.add("right");fb.innerHTML=`✅ ${why(q.ans)}`;}
+      else{qz.wrongs.push(q.ans);markWrong(q.ans);b.classList.add("wrong");body.querySelector(`[data-o="${q.ans}"]`).classList.add("right");
+        fb.innerHTML=`❌ ${why(q.ans)}<br>${why(b.dataset.o)}`;}
+      play(q.ans);
+      document.getElementById("qzNext").style.visibility="visible";
+    };
+  }else{
+    const w=q.w;
+    body.innerHTML=`<div class="qword">${w}</div>
+      <div class="center"><button class="btn ghost" id="qzHear">🔊</button></div>
+      <div class="choices">${optsFor(w).map(o=>`<button class="choice" data-o="${o}" style="color:${G[o].color}">${G[o].label}</button>`).join("")}</div>${next}`;
+    document.getElementById("qzHear").onclick=()=>play(w);
+    body.querySelector(".choices").onclick=e=>{
+      const b=e.target.closest(".choice"); if(!b||done) return; done=true;
+      const cat=W[w].cat, fb=document.getElementById("qzFb"), r=why(w);
+      body.querySelector(".qword").innerHTML=colored(w);
+      if(b.dataset.o===cat){qz.right++;markRight(w);b.classList.add("right");fb.innerHTML=`✅ ${r}`;}
+      else{qz.wrongs.push(w);markWrong(w);b.classList.add("wrong");body.querySelector(`[data-o="${cat}"]`).classList.add("right");fb.innerHTML=`❌ ${sndBtn(cat)}${r?"<br>"+r:""}`;}
+      play(w);
+      document.getElementById("qzNext").style.visibility="visible";
+    };
+  }
   document.getElementById("qzNext").onclick=()=>{qz.i++;renderQ();};
 }
 startQuiz();
