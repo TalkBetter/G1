@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phonics</title>
+<style>
+:root{
+  --bg:#fdf8f0; --card:#fff; --ink:#2b2a33; --muted:#6b6a75; --line:#ece4d6;
+  --b:#3b82f6; --p:#ef4444; --d:#8b5cf6; --t:#f59e0b; --f:#10b981;
+  --hc:#0ea5e9; --sc:#ec4899; --hg:#16a34a; --sg:#d97706;
+  --ok:#16a34a; --bad:#dc2626; --accent:#ff7a59;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",system-ui,sans-serif;line-height:1.6}
+nav{position:sticky;top:0;z-index:5;background:rgba(253,248,240,.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);display:flex;gap:6px;overflow-x:auto;padding:8px 12px}
+nav button{flex:0 0 auto;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;font:inherit;font-size:15px;cursor:pointer;color:var(--ink)}
+nav button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+main{max-width:980px;margin:16px auto 40px;padding:0 16px}
+section{display:none}
+section.on{display:block}
+.card{background:var(--card);border-radius:18px;padding:18px;box-shadow:0 4px 18px rgba(80,60,20,.08);margin-bottom:16px}
+h3{margin:0 0 10px;font-size:20px}
+.muted{color:var(--muted);font-size:14px}
+.row{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:10px 0}
+.snd{border:0;border-radius:12px;color:#fff;font:inherit;font-weight:800;font-size:18px;padding:6px 14px;cursor:pointer;white-space:nowrap}
+.snd:active{transform:scale(.95)}
+.words{display:flex;flex-wrap:wrap;gap:10px}
+.w{display:flex;align-items:center;gap:4px;background:#fff;border:2px solid var(--line);border-radius:14px;padding:6px 6px 6px 14px;font-size:20px;font-weight:700;cursor:pointer;user-select:none}
+.w:active{transform:scale(.96)}
+.w .k{border-radius:4px;padding:0 2px}
+.w .slow{border:0;background:#f3efe7;border-radius:10px;font-size:13px;padding:4px 8px;cursor:pointer}
+.w.playing{border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,122,89,.2)}
+.rule{background:#fff7e6;border-left:5px solid #ffb020;border-radius:10px;padding:8px 14px;margin-top:12px}
+table{width:100%;border-collapse:collapse}
+th,td{border:1px solid var(--line);padding:8px;text-align:center}
+th{background:#f7f1e6}
+td.cell{cursor:pointer;font-weight:700;font-size:17px}
+td.cell:hover{background:#fff4ec}
+.tablewrap{overflow-x:auto}
+.pair{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 0;border-bottom:1px dashed var(--line)}
+.pair:last-child{border-bottom:0}
+.vs{color:var(--muted);font-weight:700}
+.btn{border:0;border-radius:12px;padding:10px 18px;font:inherit;font-weight:700;cursor:pointer;background:var(--accent);color:#fff}
+.btn.ghost{background:#fff;color:var(--ink);border:2px solid var(--line)}
+.btn:disabled{opacity:.5;cursor:default}
+.big-play{width:100px;height:100px;border-radius:50%;font-size:42px;border:0;background:var(--accent);color:#fff;cursor:pointer;box-shadow:0 6px 0 #d9573a;display:block;margin:10px auto}
+.big-play:active{transform:translateY(4px);box-shadow:0 2px 0 #d9573a}
+.choices{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:14px 0}
+.choice{min-width:110px;border:2px solid var(--line);background:#fff;border-radius:14px;padding:12px 16px;font:inherit;font-size:18px;font-weight:700;cursor:pointer}
+.choice.right{background:#dcfce7;border-color:var(--ok)}
+.choice.wrong{background:#fee2e2;border-color:var(--bad)}
+.fb{text-align:center;font-size:18px;min-height:30px;font-weight:700}
+.top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.bar{height:10px;background:#f1ebe0;border-radius:99px;overflow:hidden;flex:1;min-width:120px}
+.bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+.qword{font-size:44px;font-weight:800;text-align:center;margin:6px 0;cursor:pointer}
+.center{text-align:center}
+@media (max-width:520px){.choice{min-width:44%}}
+</style>
+</head>
+<body>
+<nav id="nav">
+  <button data-s="s1" class="on">發音</button>
+  <button data-s="s2">單字表</button>
+  <button data-s="s3">對比</button>
+  <button data-s="s4">聽音辨別</button>
+  <button data-s="s5">測驗</button>
+  <button data-s="s6">錯題</button>
+</nav>
+<main>
+
+<section id="s1" class="on">
+  <div class="card">
+    <h3>b &amp; p</h3>
+    <div class="row"><button class="snd" data-snd="b" style="background:var(--b)">🔊 /b/</button><span>雙唇閉合再打開，聲帶震動</span></div>
+    <div class="words" data-list="baby,banana,bath,bear,bee,bird,boat"></div>
+    <div class="row"><button class="snd" data-snd="p" style="background:var(--p)">🔊 /p/</button><span>雙唇閉合再打開，有明顯氣流</span></div>
+    <div class="words" data-list="park,pear,pencil,pie,pizza,puppy"></div>
+  </div>
+  <div class="card">
+    <h3>d / t / f</h3>
+    <div class="row"><button class="snd" data-snd="d" style="background:var(--d)">🔊 /d/</button><span>舌尖碰上齒齦，聲帶震動</span></div>
+    <div class="words" data-list="dance,doll,door,hand,head"></div>
+    <div class="row"><button class="snd" data-snd="t" style="background:var(--t)">🔊 /t/</button><span>舌尖碰上齒齦，送氣較明顯</span></div>
+    <div class="words" data-list="tea,tooth,toy"></div>
+    <div class="row"><button class="snd" data-snd="f" style="background:var(--f)">🔊 /f/</button><span>上排牙齒輕碰下唇，吹氣</span></div>
+    <div class="words" data-list="father,finger,flower,fly,foot"></div>
+  </div>
+  <div class="card">
+    <h3>Hard c / Soft c</h3>
+    <div class="row"><button class="snd" data-snd="k" style="background:var(--hc)">🔊 /k/</button><span>Hard c</span></div>
+    <div class="words" data-list="candy,carrot,cash,class,cook,cow"></div>
+    <div class="row"><button class="snd" data-snd="s" style="background:var(--sc)">🔊 /s/</button><span>Soft c</span></div>
+    <div class="words" data-list="cent,circle,city"></div>
+    <div class="rule">c 後面接 e、i、y → 通常唸 /s/</div>
+  </div>
+  <div class="card">
+    <h3>Hard g / Soft g</h3>
+    <div class="row"><button class="snd" data-snd="g" style="background:var(--hg)">🔊 /g/</button><span>Hard g</span></div>
+    <div class="words" data-list="garden,girl,glass,goat,green"></div>
+    <div class="row"><button class="snd" data-snd="j" style="background:var(--sg)">🔊 /dʒ/</button><span>Soft g</span></div>
+    <div class="words" data-list="gem,orange"></div>
+    <div class="rule">g 後面接 e、i、y → 有時唸 /dʒ/（例外：girl 唸 /g/）</div>
+  </div>
+</section>
+
+<section id="s2">
+  <div class="card">
+    <div class="tablewrap"><table id="tbl"></table></div>
+    <div class="center" style="margin-top:14px">
+      <select id="colSel" class="btn ghost" style="padding:9px"></select>
+      <button class="btn" id="playAll">▶ 整欄播放</button>
+      <button class="btn ghost" id="stopAll">■ 停止</button>
+    </div>
+  </div>
+</section>
+
+<section id="s3">
+  <div class="card"><div id="pairs"></div></div>
+</section>
+
+<section id="s4">
+  <div class="card">
+    <div class="top">
+      <select id="lsRange" class="btn ghost" style="padding:8px">
+        <option value="all">全部</option>
+        <option value="bp">b &amp; p</option>
+        <option value="dtf">d / t / f</option>
+        <option value="c">Hard c / Soft c</option>
+        <option value="g">Hard g / Soft g</option>
+      </select>
+      <span id="lsScore" class="muted"></span>
+    </div>
+    <button class="big-play" id="lsPlay">🔊</button>
+    <div class="center"><button class="btn ghost" id="lsSlow">🐢 慢速</button></div>
+    <div class="choices" id="lsChoices"></div>
+    <div class="fb" id="lsFb"></div>
+    <div class="center"><button class="btn" id="lsNext">下一題 ➜</button></div>
+  </div>
+</section>
+
+<section id="s5">
+  <div class="card">
+    <div class="top"><div class="bar"><i id="qzBar"></i></div><span id="qzProg" class="muted"></span></div>
+    <div id="qzBody"></div>
+  </div>
+</section>
+
+<section id="s6">
+  <div class="card">
+    <div class="words" id="wrongList"></div>
+    <div class="center" style="margin-top:14px">
+      <button class="btn" id="wrongQuiz">練錯題</button>
+      <button class="btn ghost" id="wrongClear">清空</button>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+// ---------- 資料 ----------
+const G = {
+  b:{label:"b",color:"var(--b)",grp:"bp",snd:"b"}, p:{label:"p",color:"var(--p)",grp:"bp",snd:"p"},
+  d:{label:"d",color:"var(--d)",grp:"dtf",snd:"d"}, t:{label:"t",color:"var(--t)",grp:"dtf",snd:"t"}, f:{label:"f",color:"var(--f)",grp:"dtf",snd:"f"},
+  hc:{label:"Hard c /k/",color:"var(--hc)",grp:"c",snd:"k"}, sc:{label:"Soft c /s/",color:"var(--sc)",grp:"c",snd:"s"},
+  hg:{label:"Hard g /g/",color:"var(--hg)",grp:"g",snd:"g"}, sg:{label:"Soft g /dʒ/",color:"var(--sg)",grp:"g",snd:"j"}
+};
+const GROUP_OPTS = {bp:["b","p"], dtf:["d","t","f"], c:["hc","sc"], g:["hg","sg"]};
+const W = {};
+function add(list, cat, keyIdx){ list.split(",").forEach(w=>W[w]={w,cat,k:keyIdx?keyIdx(w):0}); }
+add("baby,banana,bath,bear,bee,bird,boat","b");
+add("park,pear,pencil,pie,pizza,puppy","p");
+add("dance,doll,door","d");
+add("hand,head","d",w=>w.length-1);
+add("tea,tooth,toy","t");
+add("father,finger,flower,fly,foot","f");
+add("candy,carrot,cash,class,cook,cow","hc");
+add("cent,circle,city","sc");
+add("garden,girl,glass,goat,green","hg");
+add("gem","sg");
+add("orange","sg",()=>4);
+const ALL = Object.keys(W);
+const COLS = [
+  {name:"b & p", words:"baby,banana,bath,bear,bee,bird,boat,park,pear,pencil,pie,pizza,puppy"},
+  {name:"d / t / f", words:"dance,doll,door,hand,head,tea,tooth,toy,father,finger,flower,fly,foot"},
+  {name:"Hard c", words:"candy,carrot,cash,class,cook,cow"},
+  {name:"Soft c", words:"cent,circle,city"},
+  {name:"Hard g", words:"garden,girl,glass,goat,green"},
+  {name:"Soft g", words:"gem,orange"}
+];
+
+// ---------- 音訊 ----------
+const audio = new Audio();
+const audioRevisions = {sound_p: "20261027-B", sound_k: "20261027-G", sound_s: "20261027-F", sound_g: "20261027-G", sound_j: "20261027-G"};
+let playToken = 0;
+function playFile(name){
+  return new Promise(res=>{
+    audio.pause();
+    const revision = audioRevisions[name];
+    audio.src = "audio/" + name + ".mp3" + (revision ? "?v=" + revision : "");
+    audio.onended = res; audio.onerror = res;
+    audio.play().catch(res);
+  });
+}
+function play(w, slow){
+  document.querySelectorAll('.w[data-w="'+w+'"]').forEach(e=>{e.classList.add("playing");setTimeout(()=>e.classList.remove("playing"),900)});
+  return playFile(w + (slow?"_slow":""));
+}
+const wait = ms=>new Promise(r=>setTimeout(r,ms));
+
+function colored(w){
+  const o=W[w], c=G[o.cat].color;
+  return w.split("").map((ch,i)=>i===o.k?`<span class="k" style="color:${c};background:color-mix(in srgb, ${c} 14%, transparent)">${ch}</span>`:ch).join("");
+}
+function chip(w){
+  return `<span class="w" data-w="${w}"><span>${colored(w)}</span> <button class="slow" title="慢速" data-slow="${w}">🐢</button></span>`;
+}
+function sndBtn(cat){ const g=G[cat]; return `<button class="snd" data-snd="${g.snd}" style="background:${g.color}">🔊 ${g.label}</button>`; }
+document.addEventListener("click",e=>{
+  const n=e.target.closest("[data-snd]"); if(n){playFile("sound_"+n.dataset.snd);return;}
+  const s=e.target.closest("[data-slow]"); if(s){e.stopPropagation();play(s.dataset.slow,true);return;}
+  const c=e.target.closest(".w[data-w], td.cell[data-w], .qword[data-w]"); if(c) play(c.dataset.w);
+});
+document.querySelectorAll(".words[data-list]").forEach(el=>el.innerHTML=el.dataset.list.split(",").map(chip).join(""));
+
+// ---------- 導覽 ----------
+document.getElementById("nav").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("on",x===b));
+  document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id===b.dataset.s));
+  if(b.dataset.s==="s6") renderWrong();
+  window.scrollTo({top:0,behavior:"smooth"});
+});
+
+// ---------- 單字表 ----------
+(function(){
+  const cols=COLS.map(c=>c.words.split(","));
+  const rows=Math.max(...cols.map(c=>c.length));
+  let h="<tr>"+COLS.map(c=>`<th>${c.name}</th>`).join("")+"</tr>";
+  for(let r=0;r<rows;r++) h+="<tr>"+cols.map(c=>c[r]?`<td class="cell" data-w="${c[r]}">${colored(c[r])}</td>`:"<td></td>").join("")+"</tr>";
+  document.getElementById("tbl").innerHTML=h;
+  const sel=document.getElementById("colSel");
+  sel.innerHTML=COLS.map((c,i)=>`<option value="${i}">${c.name}</option>`).join("");
+  const clear=()=>document.querySelectorAll("td.cell").forEach(td=>td.style.background="");
+  document.getElementById("playAll").onclick=async()=>{
+    const my=++playToken;
+    for(const w of COLS[sel.value].words.split(",")){
+      if(my!==playToken) return;
+      document.querySelectorAll("td.cell").forEach(td=>td.style.background=td.dataset.w===w?"#ffe6db":"");
+      await play(w); await wait(700);
+    }
+    clear();
+  };
+  document.getElementById("stopAll").onclick=()=>{playToken++;audio.pause();clear();};
+})();
+
+// ---------- 對比 ----------
+(function(){
+  const P=[
+    ["bear","pear"],["baby","puppy"],["bee","pie"],["boat","park"],
+    ["door","toy","foot"],["doll","tooth","fly"],
+    ["cow","city"],["candy","cent"],["class","circle"],
+    ["goat","gem"],["girl","gem"],["green","orange"]
+  ];
+  document.getElementById("pairs").innerHTML=P.map((ws,i)=>
+    `<div class="pair">${ws.map(chip).join('<span class="vs">vs</span>')}<button class="btn ghost" data-pair="${i}">▶</button></div>`).join("");
+  document.getElementById("pairs").addEventListener("click",async e=>{
+    const b=e.target.closest("[data-pair]"); if(!b) return;
+    const my=++playToken;
+    for(let rep=0;rep<2;rep++) for(const w of P[b.dataset.pair]){ if(my!==playToken) return; await play(w); await wait(500); }
+  });
+})();
+
+// ---------- 錯題 ----------
+const LS="phonics_wrong_v1";
+function loadWrong(){try{return JSON.parse(localStorage.getItem(LS))||{}}catch(e){return {}}}
+let wrong=loadWrong();
+function saveWrong(){try{localStorage.setItem(LS,JSON.stringify(wrong))}catch(e){}}
+function markWrong(w){wrong[w]=0;saveWrong();}
+function markRight(w){if(w in wrong){wrong[w]++; if(wrong[w]>=2) delete wrong[w]; saveWrong();}}
+function renderWrong(){
+  const ks=Object.keys(wrong);
+  document.getElementById("wrongList").innerHTML=ks.length?ks.map(chip).join(""):'<p class="muted">沒有錯題 🎉</p>';
+  document.getElementById("wrongQuiz").disabled=!ks.length;
+}
+document.getElementById("wrongClear").onclick=()=>{wrong={};saveWrong();renderWrong();};
+document.getElementById("wrongQuiz").onclick=()=>{
+  startQuiz(Object.keys(wrong));
+  document.querySelector('nav button[data-s="s5"]').click();
+};
+
+function optsFor(w){ return GROUP_OPTS[G[W[w].cat].grp]; }
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a;}
+
+// ---------- 聽音辨別 ----------
+(function(){
+  let cur=null, answered=false, right=0, total=0, bag=[];
+  const fb=document.getElementById("lsFb"), ch=document.getElementById("lsChoices"), range=document.getElementById("lsRange");
+  function pool(){return range.value==="all"?ALL:ALL.filter(w=>G[W[w].cat].grp===range.value);}
+  function next(){
+    if(!bag.length) bag=shuffle(pool());
+    cur=bag.pop(); answered=false; fb.textContent="";
+    const opts=range.value==="all"?Object.keys(G):optsFor(cur);
+    ch.innerHTML=opts.map(o=>`<button class="choice" data-o="${o}" style="color:${G[o].color}">${G[o].label}</button>`).join("");
+    play(cur);
+  }
+  ch.addEventListener("click",e=>{
+    const b=e.target.closest(".choice"); if(!b||answered) return;
+    answered=true; total++;
+    const cat=W[cur].cat;
+    if(b.dataset.o===cat){right++;markRight(cur);b.classList.add("right");fb.innerHTML=`✅ <span style="font-size:26px">${colored(cur)}</span>`;}
+    else{markWrong(cur);b.classList.add("wrong");ch.querySelector(`[data-o="${cat}"]`).classList.add("right");
+      fb.innerHTML=`❌ <span style="font-size:26px">${colored(cur)}</span> ${sndBtn(cat)}`;}
+    document.getElementById("lsScore").textContent=`${right} / ${total}`;
+  });
+  document.getElementById("lsPlay").onclick=()=>cur?play(cur):next();
+  document.getElementById("lsSlow").onclick=()=>cur&&play(cur,true);
+  document.getElementById("lsNext").onclick=next;
+  range.onchange=()=>{bag=[];next();};
+})();
+
+// ---------- 測驗 ----------
+let qz=null;
+function startQuiz(list){
+  const src=list&&list.length?list:ALL;
+  qz={qs:shuffle(src).slice(0,10),i:0,right:0,wrongs:[]};
+  renderQ();
+}
+function renderQ(){
+  const body=document.getElementById("qzBody"), n=qz.qs.length;
+  document.getElementById("qzBar").style.width=(qz.i/n*100)+"%";
+  document.getElementById("qzProg").textContent=`${Math.min(qz.i+1,n)} / ${n}`;
+  if(qz.i>=n){
+    body.innerHTML=`<div class="center"><h3 style="margin-top:12px">${qz.right} / ${n}</h3>
+      ${qz.wrongs.length?`<div class="words" style="justify-content:center">${qz.wrongs.map(chip).join("")}</div>`:"🎉"}
+      <p><button class="btn" id="qzAgain">再測一次</button></p></div>`;
+    document.getElementById("qzAgain").onclick=()=>startQuiz();
+    return;
+  }
+  const w=qz.qs[qz.i];
+  body.innerHTML=`<div class="qword">${w}</div>
+    <div class="center"><button class="btn ghost" id="qzHear">🔊</button></div>
+    <div class="choices">${optsFor(w).map(o=>`<button class="choice" data-o="${o}" style="color:${G[o].color}">${G[o].label}</button>`).join("")}</div>
+    <div class="fb" id="qzFb"></div>
+    <div class="center"><button class="btn" id="qzNext" style="visibility:hidden">下一題 ➜</button></div>`;
+  document.getElementById("qzHear").onclick=()=>play(w);
+  let done=false;
+  body.querySelector(".choices").onclick=e=>{
+    const b=e.target.closest(".choice"); if(!b||done) return; done=true;
+    const cat=W[w].cat, fb=document.getElementById("qzFb");
+    body.querySelector(".qword").innerHTML=colored(w);
+    if(b.dataset.o===cat){qz.right++;markRight(w);b.classList.add("right");fb.textContent="✅";}
+    else{qz.wrongs.push(w);markWrong(w);b.classList.add("wrong");body.querySelector(`[data-o="${cat}"]`).classList.add("right");fb.innerHTML=`❌ ${sndBtn(cat)}`;}
+    play(w);
+    document.getElementById("qzNext").style.visibility="visible";
+  };
+  document.getElementById("qzNext").onclick=()=>{qz.i++;renderQ();};
+}
+startQuiz();
+</script>
+</body>
+</html>
